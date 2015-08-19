@@ -261,29 +261,31 @@ public:
 	}
 };
 
-/*void _tdUnregisterCallback(const FunctionCallbackInfo<Value> &args)
+void _tdUnregisterCallback(const FunctionCallbackInfo<Value> &args)
 {
-	Local<Integer> id = Local<Integer>::Cast(args[0]);
+	int id = args[0]->NumberValue();
 	tdUnregisterCallback(id);
 }
-*/
 
-
-void _tdGetNumberOfDevices(const FunctionCallbackInfo<Value>& args){
+void _tdGetNumberOfDevices(const FunctionCallbackInfo<Value>& args)
+{
 	int intNumberOfDevices = tdGetNumberOfDevices();
 	args.GetReturnValue().Set(intNumberOfDevices);
 }
 
-void _tdclose(const FunctionCallbackInfo<Value>& args){
+void _tdClose(const FunctionCallbackInfo<Value>& args)
+{
 	tdClose();
 }
 
-void _tdTurnOn(const FunctionCallbackInfo<Value>& args){
+void _tdTurnOn(const FunctionCallbackInfo<Value>& args)
+{
 	printf("id: %d\n", args[0]->Int32Value()); 	
 	printf("turnOn: %d\n", tdTurnOn(args[0]->Int32Value())); 
 }
 
-void _tdTurnOff(const FunctionCallbackInfo<Value>& args){
+void _tdTurnOff(const FunctionCallbackInfo<Value>& args)
+{
 	tdTurnOff(args[0]->Int32Value()); 
 }
 
@@ -376,6 +378,7 @@ void _tdRegisterSensorEvent(const FunctionCallbackInfo<Value> &args)
 
 	tdRegisterSensorEvent(sensor_event_callback, test);
 }
+
 void _tdRegisterRawDeviceEvent(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = Isolate::GetCurrent();
@@ -389,16 +392,392 @@ void _tdRegisterRawDeviceEvent(const FunctionCallbackInfo<Value> &args)
 	tdRegisterRawDeviceEvent(raw_device_event_callback, test);
 }
 
-void init(Handle<Object> exports) {
-	NODE_SET_METHOD(exports, "tdclose", _tdclose);
+void _tdBell(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+	tdBell(id);
+}
+
+void _tdDim(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+	unsigned char level = args[1]->NumberValue();
+
+	tdDim(id, level);
+}
+
+void _tdExecute(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+
+	tdExecute(id);
+}
+
+void _tdUp(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+
+	tdUp(id);
+}
+
+void _tdDown(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+
+	tdDown(id);
+}
+
+void _tdStop(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+
+	tdStop(id);
+}
+
+void _tdLearn(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+
+	tdLearn(id);
+}
+
+void _tdLastSentCommand(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue(), ret;
+	int methodsSupported = args[0]->NumberValue();
+
+	ret = tdLastSentCommand(id, methodsSupported);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdLastSentValue(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	char *ret;
+
+	ret = tdLastSentValue(id);
+
+	args.GetReturnValue().Set(String::NewFromUtf8(isolate, ret));
+
+	tdReleaseString(ret);
+}
+
+void _tdGetDeviceId(const FunctionCallbackInfo<Value> &args)
+{
+	int intDeviceIndex = args[0]->NumberValue(), ret;
+
+	ret = tdGetDeviceId(intDeviceIndex);
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdGetDeviceType(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue(), ret;
+
+	ret = tdGetDeviceType(id);
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdGetName(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	char *ret;
+
+	ret = tdGetName(id);
+
+	args.GetReturnValue().Set(String::NewFromUtf8(isolate, ret));
+
+	tdReleaseString(ret);
+}
+
+void _tdSetName(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	String::Utf8Value name(args[1]->ToString());
+	bool ret;
+
+	ret = tdSetName(id, *name);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdGetProtocol(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	char *ret;
+
+	ret = tdGetProtocol(id);
+
+	args.GetReturnValue().Set(String::NewFromUtf8(isolate, ret));
+
+	tdReleaseString(ret);
+}
+
+void _tdSetProtocol(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	String::Utf8Value strProtocol(args[1]->ToString());
+	bool ret;
+
+	ret = tdSetProtocol(id, *strProtocol);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdGetModel(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	char *ret;
+
+	ret = tdGetModel(id);
+
+	args.GetReturnValue().Set(String::NewFromUtf8(isolate, ret));
+
+	tdReleaseString(ret);
+}
+
+void _tdSetModel(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	String::Utf8Value strModel(args[1]->ToString());
+	bool ret;
+
+	ret = tdSetModel(id, *strModel);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdSetDeviceParameter(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	String::Utf8Value strName(args[1]->ToString());
+	String::Utf8Value strValue(args[2]->ToString());
+	bool ret;
+
+	ret = tdSetDeviceParameter(id, *strName, *strValue);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdGetDeviceParameter(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	String::Utf8Value strName(args[1]->ToString());
+	String::Utf8Value strValue(args[2]->ToString());
+	char *ret;
+
+	ret = tdGetDeviceParameter(id, *strName, *strValue);
+
+	args.GetReturnValue().Set(String::NewFromUtf8(isolate, ret));
+
+	tdReleaseString(ret);
+}
+
+void _tdAddDevice(const FunctionCallbackInfo<Value> &args)
+{
+	int ret = tdAddDevice();
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdRemoveDevice(const FunctionCallbackInfo<Value> &args)
+{
+	int id = args[0]->NumberValue();
+	bool ret = tdRemoveDevice(id);
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdMethods(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int id = args[0]->NumberValue();
+	int methodsSupported = args[1]->NumberValue();
+	int ret;
+
+	ret = tdMethods(id, methodsSupported);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdGetErrorString(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	int intErrNo = args[0]->NumberValue();
+	char *ret;
+
+	ret = tdGetErrorString(intErrNo);
+
+	args.GetReturnValue().Set(String::NewFromUtf8(isolate, ret));
+
+	tdReleaseString(ret);
+}
+
+void _tdSendRawCommand(const FunctionCallbackInfo<Value> &args)
+{
+	String::Utf8Value command(args[0]->ToString());
+	int reserved = args[1]->NumberValue(), ret;
+
+	ret = tdSendRawCommand(*command, reserved);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdConnectTellStickController(const FunctionCallbackInfo<Value> &args)
+{
+	int vid = args[0]->NumberValue();
+	int pid = args[1]->NumberValue();
+	String::Utf8Value serial(args[2]->ToString());
+
+	tdConnectTellStickController(vid, pid, *serial);
+}
+
+void _tdDisconnectTellStickController(const FunctionCallbackInfo<Value> &args)
+{
+	int vid = args[0]->NumberValue();
+	int pid = args[1]->NumberValue();
+	String::Utf8Value serial(args[2]->ToString());
+
+	tdDisconnectTellStickController(vid, pid, *serial);
+}
+
+void _tdSensor(const FunctionCallbackInfo<Value> &args)
+{
+	// TODO: not yet sure how to return more than one value
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+
+	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+
+	//ret = tdSensor(...);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdSensorValue(const FunctionCallbackInfo<Value> &args)
+{
+	// TODO: not yet sure how to return more than one value
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+
+	//String::Utf8Value protocol(args[0]->ToString());
+	//String::Utf8Value serial(args[1]->ToString());
+	//int id = args[2]->NumberValue();
+	//int dataType = args[3]->NumberValue();
+	//int len = args[4]->NumberValue();
+
+	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+
+	//ret = tdSensorValue(...);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdSetControllerValue(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+
+	int id = args[0]->NumberValue();
+	String::Utf8Value name(args[1]->ToString());
+	String::Utf8Value value(args[2]->ToString());
+
+	int ret;
+
+	ret = tdSetControllerValue(id, *name, *value);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdRemoveController(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+
+	int id = args[0]->NumberValue(), ret;
+
+	ret = tdRemoveController(id);
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdController(const FunctionCallbackInfo<Value> &args)
+{
+	// TODO: not yet sure how to return more than one value
+	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+
+
+	args.GetReturnValue().Set(ret);
+}
+
+void _tdControllerValue(const FunctionCallbackInfo<Value> &args)
+{
+	// TODO: not yet sure how to return more than one value
+	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+
+
+	args.GetReturnValue().Set(ret);
+}
+
+void init(Handle<Object> exports)
+{
+	NODE_SET_METHOD(exports, "tdClose", _tdClose);
 	NODE_SET_METHOD(exports, "tdTurnOff", _tdTurnOff);
 	NODE_SET_METHOD(exports, "tdTurnOn", _tdTurnOn);
 	NODE_SET_METHOD(exports, "tdGetNumberOfDevices", _tdGetNumberOfDevices);
 	NODE_SET_METHOD(exports, "tdRegisterSensorEvent", _tdRegisterSensorEvent);
 	NODE_SET_METHOD(exports, "tdRegisterRawDeviceEvent", _tdRegisterRawDeviceEvent);
-//	NODE_SET_METHOD(exports, "tdUnregisterCallback", _tdUnregisterCallback);
-//	NODE_SET_METHOD(exports, "", );
-
+	NODE_SET_METHOD(exports, "tdUnregisterCallback", _tdUnregisterCallback);
+	NODE_SET_METHOD(exports, "tdBell", _tdBell);
+	NODE_SET_METHOD(exports, "tdDim", _tdDim);
+	NODE_SET_METHOD(exports, "tdExecute", _tdExecute);
+	NODE_SET_METHOD(exports, "tdUp", _tdUp);
+	NODE_SET_METHOD(exports, "tdDown", _tdDown);
+	NODE_SET_METHOD(exports, "tdStop", _tdStop);
+	NODE_SET_METHOD(exports, "tdLastSentCommand", _tdLastSentCommand);
+	NODE_SET_METHOD(exports, "tdLastSentValue", _tdLastSentValue);
+	NODE_SET_METHOD(exports, "tdGetDeviceId", _tdGetDeviceId);
+	NODE_SET_METHOD(exports, "tdGetDeviceType", _tdGetDeviceType);
+	NODE_SET_METHOD(exports, "tdGetName", _tdGetName);
+	NODE_SET_METHOD(exports, "tdSetName", _tdSetName);
+	NODE_SET_METHOD(exports, "tdGetProtocol", _tdGetProtocol);
+	NODE_SET_METHOD(exports, "tdSetProtocol", _tdSetProtocol);
+	NODE_SET_METHOD(exports, "tdGetModel", _tdGetModel);
+	NODE_SET_METHOD(exports, "tdSetModel", _tdSetModel);
+	NODE_SET_METHOD(exports, "tdSetDeviceParameter", _tdSetDeviceParameter);
+	NODE_SET_METHOD(exports, "tdGetDeviceParameter", _tdGetDeviceParameter);
+	NODE_SET_METHOD(exports, "tdAddDevice", _tdAddDevice);
+	NODE_SET_METHOD(exports, "tdRemoveDevice", _tdRemoveDevice);
+	NODE_SET_METHOD(exports, "tdMethods", _tdMethods);
+	NODE_SET_METHOD(exports, "tdGetErrorString", _tdGetErrorString);
+	NODE_SET_METHOD(exports, "tdSendRawCommand", _tdSendRawCommand);
+	NODE_SET_METHOD(exports, "tdConnectTellStickController", _tdConnectTellStickController);
+	NODE_SET_METHOD(exports, "tdDisconnectTellStickController", _tdDisconnectTellStickController);
+	NODE_SET_METHOD(exports, "tdSensor", _tdSensor);
+	NODE_SET_METHOD(exports, "tdSensorValue", _tdSensorValue);
+	NODE_SET_METHOD(exports, "tdController", _tdController);
+	NODE_SET_METHOD(exports, "tdControllerValue", _tdControllerValue);
+	NODE_SET_METHOD(exports, "tdSetControllerValue", _tdSetControllerValue);
+	NODE_SET_METHOD(exports, "tdRemoveController", _tdRemoveController);
 
 	tdInit();
 
