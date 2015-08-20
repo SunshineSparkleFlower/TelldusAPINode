@@ -662,34 +662,59 @@ void _tdDisconnectTellStickController(const FunctionCallbackInfo<Value> &args)
 
 void _tdSensor(const FunctionCallbackInfo<Value> &args)
 {
-	// TODO: not yet sure how to return more than one value
 	Isolate *isolate = Isolate::GetCurrent();
 	HandleScope scope(isolate);
+	char protocol[1024], model[1024];
+	int id, dataTypes;
+	int ret;
+	Local<Object> obj = Object::New(isolate);
 
-	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	ret = tdSensor(protocol, sizeof(protocol), model, sizeof(model),
+			&id, &dataTypes);
 
-	//ret = tdSensor(...);
+	if (ret != TELLSTICK_SUCCESS) {
+		args.GetReturnValue().SetUndefined();
+		return;
+	}
 
-	args.GetReturnValue().Set(ret);
+	obj->Set(String::NewFromUtf8(isolate, "protocol"),
+			String::NewFromUtf8(isolate, protocol));
+	obj->Set(String::NewFromUtf8(isolate, "model"),
+			String::NewFromUtf8(isolate, model));
+	obj->Set(String::NewFromUtf8(isolate, "id"),
+			Integer::New(isolate, id));
+	obj->Set(String::NewFromUtf8(isolate, "dataTypes"),
+			Integer::New(isolate, dataTypes));
+
+	args.GetReturnValue().Set(obj);
 }
 
 void _tdSensorValue(const FunctionCallbackInfo<Value> &args)
 {
-	// TODO: not yet sure how to return more than one value
 	Isolate *isolate = Isolate::GetCurrent();
 	HandleScope scope(isolate);
+	Local<Object> obj = Object::New(isolate);
+	String::Utf8Value protocol(args[0]->ToString());
+	String::Utf8Value model(args[1]->ToString());
+	int id = args[2]->NumberValue();
+	int dataType = args[3]->NumberValue();
+	char value[1024];
+	int ret, timestamp;
 
-	//String::Utf8Value protocol(args[0]->ToString());
-	//String::Utf8Value serial(args[1]->ToString());
-	//int id = args[2]->NumberValue();
-	//int dataType = args[3]->NumberValue();
-	//int len = args[4]->NumberValue();
+	ret = tdSensorValue(*protocol, *model, id, dataType,
+			value, sizeof(value), &timestamp);
 
-	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	if (ret != TELLSTICK_SUCCESS) {
+		args.GetReturnValue().SetUndefined();
+		return;
+	}
 
-	//ret = tdSensorValue(...);
+	obj->Set(String::NewFromUtf8(isolate, "value"),
+			String::NewFromUtf8(isolate, value));
+	obj->Set(String::NewFromUtf8(isolate, "timestamp"),
+			Integer::New(isolate, timestamp));
 
-	args.GetReturnValue().Set(ret);
+	args.GetReturnValue().Set(obj);
 }
 
 void _tdSetControllerValue(const FunctionCallbackInfo<Value> &args)
@@ -722,20 +747,59 @@ void _tdRemoveController(const FunctionCallbackInfo<Value> &args)
 
 void _tdController(const FunctionCallbackInfo<Value> &args)
 {
-	// TODO: not yet sure how to return more than one value
-	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	char name[1024];
+	int controllerId, controllerType, available;
+	int ret;
+	Local<Object> obj = Object::New(isolate);
 
+	ret = tdController(&controllerId, &controllerType, name, sizeof(name),
+			&available);
 
-	args.GetReturnValue().Set(ret);
+	if (ret != TELLSTICK_SUCCESS) {
+		args.GetReturnValue().SetUndefined();
+		return;
+	}
+
+	obj->Set(String::NewFromUtf8(isolate, "controllerId"),
+			Integer::New(isolate, controllerId));
+	obj->Set(String::NewFromUtf8(isolate, "controllerType"),
+			Integer::New(isolate, controllerType));
+	obj->Set(String::NewFromUtf8(isolate, "name"),
+			String::NewFromUtf8(isolate, name));
+	obj->Set(String::NewFromUtf8(isolate, "available"),
+			Integer::New(isolate, available));
+
+	args.GetReturnValue().Set(obj);
 }
 
 void _tdControllerValue(const FunctionCallbackInfo<Value> &args)
 {
-	// TODO: not yet sure how to return more than one value
-	int ret = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	Local<Object> obj = Object::New(isolate);
+	String::Utf8Value protocol(args[0]->ToString());
+	String::Utf8Value model(args[1]->ToString());
+	int id = args[2]->NumberValue();
+	int dataType = args[3]->NumberValue();
+	char value[1024];
+	int ret, timestamp;
 
+	ret = tdSensorValue(*protocol, *model, id, dataType,
+			value, sizeof(value), &timestamp);
 
-	args.GetReturnValue().Set(ret);
+	if (ret != TELLSTICK_SUCCESS) {
+		args.GetReturnValue().SetUndefined();
+		return;
+	}
+
+	obj->Set(String::NewFromUtf8(isolate, "value"),
+			String::NewFromUtf8(isolate, value));
+	obj->Set(String::NewFromUtf8(isolate, "timestamp"),
+			Integer::New(isolate, timestamp));
+
+	args.GetReturnValue().Set(obj);
 }
 
 void init(Handle<Object> exports)
