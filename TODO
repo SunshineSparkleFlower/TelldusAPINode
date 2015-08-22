@@ -1,4 +1,0 @@
-- Check for correct number of arguments in all node functions
-- Throw exceptions in case of errors
-- Implement functions _tdSensor, _tdSensorValue, _tdController and _tdControllerValue
-- Implement some way to export TELLSTICK_* defines to node
