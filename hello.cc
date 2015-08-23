@@ -802,8 +802,86 @@ void _tdControllerValue(const FunctionCallbackInfo<Value> &args)
 	args.GetReturnValue().Set(obj);
 }
 
+void export_defines(Handle<Object> exports)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope handle_scope(isolate);
+
+#define OBJ_SET(obj, name, val) (obj)->Set(String::NewFromUtf8(isolate, (name)), \
+		Integer::New(isolate, (val)))
+	Local<Object> method_flags = Object::New(isolate);
+	OBJ_SET(method_flags, "turnon", TELLSTICK_TURNON);
+	OBJ_SET(method_flags, "turnoff", TELLSTICK_TURNOFF);
+	OBJ_SET(method_flags, "bell", TELLSTICK_BELL);
+	OBJ_SET(method_flags, "toggle", TELLSTICK_TOGGLE);
+	OBJ_SET(method_flags, "dim", TELLSTICK_DIM);
+	OBJ_SET(method_flags, "learn", TELLSTICK_LEARN);
+	OBJ_SET(method_flags, "execute", TELLSTICK_EXECUTE);
+	OBJ_SET(method_flags, "up", TELLSTICK_UP);
+	OBJ_SET(method_flags, "down", TELLSTICK_DOWN);
+	OBJ_SET(method_flags, "stop", TELLSTICK_STOP);
+	exports->Set(String::NewFromUtf8(isolate, "method_flags"), method_flags);
+
+	Local<Object> device_types = Object::New(isolate);
+	OBJ_SET(device_types, "device", TELLSTICK_TYPE_DEVICE);
+	OBJ_SET(device_types, "group", TELLSTICK_TYPE_GROUP);
+	OBJ_SET(device_types, "scene", TELLSTICK_TYPE_SCENE);
+	exports->Set(String::NewFromUtf8(isolate, "device_types"), device_types);
+
+	Local<Object> sensor_value_types = Object::New(isolate);
+	OBJ_SET(sensor_value_types, "temperature", TELLSTICK_TEMPERATURE);
+	OBJ_SET(sensor_value_types, "humidity", TELLSTICK_HUMIDITY);
+	OBJ_SET(sensor_value_types, "rainrate", TELLSTICK_RAINRATE);
+	OBJ_SET(sensor_value_types, "raintotal", TELLSTICK_RAINTOTAL);
+	OBJ_SET(sensor_value_types, "winddirection", TELLSTICK_WINDDIRECTION);
+	OBJ_SET(sensor_value_types, "windaverage", TELLSTICK_WINDAVERAGE);
+	OBJ_SET(sensor_value_types, "windgust", TELLSTICK_WINDGUST);
+	exports->Set(String::NewFromUtf8(isolate, "sensor_value_types"), sensor_value_types);
+
+	Local<Object> controller_type = Object::New(isolate);
+	OBJ_SET(controller_type, "tellstick", TELLSTICK_CONTROLLER_TELLSTICK);
+	OBJ_SET(controller_type, "tellstick_duo", TELLSTICK_CONTROLLER_TELLSTICK_DUO);
+	OBJ_SET(controller_type, "tellstick_net", TELLSTICK_CONTROLLER_TELLSTICK_NET);
+	exports->Set(String::NewFromUtf8(isolate, "controller_type"), controller_type);
+
+	Local<Object> device_changes = Object::New(isolate);
+	OBJ_SET(device_changes, "added", TELLSTICK_DEVICE_ADDED);
+	OBJ_SET(device_changes, "changed", TELLSTICK_DEVICE_CHANGED);
+	OBJ_SET(device_changes, "removed", TELLSTICK_DEVICE_REMOVED);
+	OBJ_SET(device_changes, "state_changed", TELLSTICK_DEVICE_STATE_CHANGED);
+	exports->Set(String::NewFromUtf8(isolate, "device_changes"), device_changes);
+
+	Local<Object> change_types = Object::New(isolate);
+	OBJ_SET(change_types, "name", TELLSTICK_CHANGE_NAME);
+	OBJ_SET(change_types, "protocol", TELLSTICK_CHANGE_PROTOCOL);
+	OBJ_SET(change_types, "model", TELLSTICK_CHANGE_MODEL);
+	OBJ_SET(change_types, "method", TELLSTICK_CHANGE_METHOD);
+	OBJ_SET(change_types, "available", TELLSTICK_CHANGE_AVAILABLE);
+	OBJ_SET(change_types, "firmware", TELLSTICK_CHANGE_FIRMWARE);
+	exports->Set(String::NewFromUtf8(isolate, "change_types"), change_types);
+
+	Local<Object> error_codes = Object::New(isolate);
+	OBJ_SET(error_codes, "success", TELLSTICK_SUCCESS);
+	OBJ_SET(error_codes, "not_found", TELLSTICK_ERROR_NOT_FOUND);
+	OBJ_SET(error_codes, "permission_denied", TELLSTICK_ERROR_PERMISSION_DENIED);
+	OBJ_SET(error_codes, "device_not_found", TELLSTICK_ERROR_DEVICE_NOT_FOUND);
+	OBJ_SET(error_codes, "method_not_supported", TELLSTICK_ERROR_METHOD_NOT_SUPPORTED);
+	OBJ_SET(error_codes, "communication", TELLSTICK_ERROR_COMMUNICATION);
+	OBJ_SET(error_codes, "connecting_service", TELLSTICK_ERROR_CONNECTING_SERVICE);
+	OBJ_SET(error_codes, "unknown_response", TELLSTICK_ERROR_UNKNOWN_RESPONSE);
+	OBJ_SET(error_codes, "syntax", TELLSTICK_ERROR_SYNTAX);
+	OBJ_SET(error_codes, "broken_pipe", TELLSTICK_ERROR_BROKEN_PIPE);
+	OBJ_SET(error_codes, "communicating_service", TELLSTICK_ERROR_COMMUNICATING_SERVICE);
+	OBJ_SET(error_codes, "unknown", TELLSTICK_ERROR_UNKNOWN);
+	exports->Set(String::NewFromUtf8(isolate, "error_codes"), error_codes);
+#undef OBJ_SET
+}
+
 void init(Handle<Object> exports)
 {
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope handle_scope(isolate);
+
 	NODE_SET_METHOD(exports, "tdClose", _tdClose);
 	NODE_SET_METHOD(exports, "tdTurnOff", _tdTurnOff);
 	NODE_SET_METHOD(exports, "tdTurnOn", _tdTurnOn);
@@ -842,6 +920,8 @@ void init(Handle<Object> exports)
 	NODE_SET_METHOD(exports, "tdControllerValue", _tdControllerValue);
 	NODE_SET_METHOD(exports, "tdSetControllerValue", _tdSetControllerValue);
 	NODE_SET_METHOD(exports, "tdRemoveController", _tdRemoveController);
+
+	export_defines(exports);
 
 	tdInit();
 
