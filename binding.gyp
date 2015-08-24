@@ -2,7 +2,7 @@
   "targets": [
     {
       "target_name": "addon",
-      "sources": [ "hello.cc" ],
+      "sources": [ "telldus-core_node.cc" ],
 
       'link_settings': {
           'libraries': [

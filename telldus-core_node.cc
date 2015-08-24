@@ -1347,7 +1347,7 @@ void _tdController(const FunctionCallbackInfo<Value> &args)
 			&available);
 
 	if (ret != TELLSTICK_SUCCESS) {
-		args.GetReturnValue().SetUndefined();
+		THROW_TELLSTICK_EXCEPTION(isolate, ret);
 		return;
 	}
 
@@ -1474,44 +1474,44 @@ void init(Handle<Object> exports)
 	Isolate *isolate = Isolate::GetCurrent();
 	HandleScope handle_scope(isolate);
 
-	NODE_SET_METHOD(exports, "tdClose", _tdClose);
-	NODE_SET_METHOD(exports, "tdTurnOff", _tdTurnOff);
-	NODE_SET_METHOD(exports, "tdTurnOn", _tdTurnOn);
-	NODE_SET_METHOD(exports, "tdGetNumberOfDevices", _tdGetNumberOfDevices);
-	NODE_SET_METHOD(exports, "tdRegisterSensorEvent", _tdRegisterSensorEvent);
-	NODE_SET_METHOD(exports, "tdRegisterRawDeviceEvent", _tdRegisterRawDeviceEvent);
-	NODE_SET_METHOD(exports, "tdUnregisterCallback", _tdUnregisterCallback);
-	NODE_SET_METHOD(exports, "tdBell", _tdBell);
-	NODE_SET_METHOD(exports, "tdDim", _tdDim);
-	NODE_SET_METHOD(exports, "tdExecute", _tdExecute);
-	NODE_SET_METHOD(exports, "tdUp", _tdUp);
-	NODE_SET_METHOD(exports, "tdDown", _tdDown);
-	NODE_SET_METHOD(exports, "tdStop", _tdStop);
-	NODE_SET_METHOD(exports, "tdLastSentCommand", _tdLastSentCommand);
-	NODE_SET_METHOD(exports, "tdLastSentValue", _tdLastSentValue);
-	NODE_SET_METHOD(exports, "tdGetDeviceId", _tdGetDeviceId);
-	NODE_SET_METHOD(exports, "tdGetDeviceType", _tdGetDeviceType);
-	NODE_SET_METHOD(exports, "tdGetName", _tdGetName);
-	NODE_SET_METHOD(exports, "tdSetName", _tdSetName);
-	NODE_SET_METHOD(exports, "tdGetProtocol", _tdGetProtocol);
-	NODE_SET_METHOD(exports, "tdSetProtocol", _tdSetProtocol);
-	NODE_SET_METHOD(exports, "tdGetModel", _tdGetModel);
-	NODE_SET_METHOD(exports, "tdSetModel", _tdSetModel);
-	NODE_SET_METHOD(exports, "tdSetDeviceParameter", _tdSetDeviceParameter);
-	NODE_SET_METHOD(exports, "tdGetDeviceParameter", _tdGetDeviceParameter);
-	NODE_SET_METHOD(exports, "tdAddDevice", _tdAddDevice);
-	NODE_SET_METHOD(exports, "tdRemoveDevice", _tdRemoveDevice);
-	NODE_SET_METHOD(exports, "tdMethods", _tdMethods);
-	NODE_SET_METHOD(exports, "tdGetErrorString", _tdGetErrorString);
-	NODE_SET_METHOD(exports, "tdSendRawCommand", _tdSendRawCommand);
-	NODE_SET_METHOD(exports, "tdConnectTellStickController", _tdConnectTellStickController);
-	NODE_SET_METHOD(exports, "tdDisconnectTellStickController", _tdDisconnectTellStickController);
-	NODE_SET_METHOD(exports, "tdSensor", _tdSensor);
-	NODE_SET_METHOD(exports, "tdSensorValue", _tdSensorValue);
-	NODE_SET_METHOD(exports, "tdController", _tdController);
-	NODE_SET_METHOD(exports, "tdControllerValue", _tdControllerValue);
-	NODE_SET_METHOD(exports, "tdSetControllerValue", _tdSetControllerValue);
-	NODE_SET_METHOD(exports, "tdRemoveController", _tdRemoveController);
+	NODE_SET_METHOD(exports, "Close", _tdClose);
+	NODE_SET_METHOD(exports, "TurnOff", _tdTurnOff);
+	NODE_SET_METHOD(exports, "TurnOn", _tdTurnOn);
+	NODE_SET_METHOD(exports, "GetNumberOfDevices", _tdGetNumberOfDevices);
+	NODE_SET_METHOD(exports, "RegisterSensorEvent", _tdRegisterSensorEvent);
+	NODE_SET_METHOD(exports, "RegisterRawDeviceEvent", _tdRegisterRawDeviceEvent);
+	NODE_SET_METHOD(exports, "UnregisterCallback", _tdUnregisterCallback);
+	NODE_SET_METHOD(exports, "Bell", _tdBell);
+	NODE_SET_METHOD(exports, "Dim", _tdDim);
+	NODE_SET_METHOD(exports, "Execute", _tdExecute);
+	NODE_SET_METHOD(exports, "Up", _tdUp);
+	NODE_SET_METHOD(exports, "Down", _tdDown);
+	NODE_SET_METHOD(exports, "Stop", _tdStop);
+	NODE_SET_METHOD(exports, "LastSentCommand", _tdLastSentCommand);
+	NODE_SET_METHOD(exports, "LastSentValue", _tdLastSentValue);
+	NODE_SET_METHOD(exports, "GetDeviceId", _tdGetDeviceId);
+	NODE_SET_METHOD(exports, "GetDeviceType", _tdGetDeviceType);
+	NODE_SET_METHOD(exports, "GetName", _tdGetName);
+	NODE_SET_METHOD(exports, "SetName", _tdSetName);
+	NODE_SET_METHOD(exports, "GetProtocol", _tdGetProtocol);
+	NODE_SET_METHOD(exports, "SetProtocol", _tdSetProtocol);
+	NODE_SET_METHOD(exports, "GetModel", _tdGetModel);
+	NODE_SET_METHOD(exports, "SetModel", _tdSetModel);
+	NODE_SET_METHOD(exports, "SetDeviceParameter", _tdSetDeviceParameter);
+	NODE_SET_METHOD(exports, "GetDeviceParameter", _tdGetDeviceParameter);
+	NODE_SET_METHOD(exports, "AddDevice", _tdAddDevice);
+	NODE_SET_METHOD(exports, "RemoveDevice", _tdRemoveDevice);
+	NODE_SET_METHOD(exports, "Methods", _tdMethods);
+	NODE_SET_METHOD(exports, "GetErrorString", _tdGetErrorString);
+	NODE_SET_METHOD(exports, "SendRawCommand", _tdSendRawCommand);
+	NODE_SET_METHOD(exports, "ConnectTellStickController", _tdConnectTellStickController);
+	NODE_SET_METHOD(exports, "DisconnectTellStickController", _tdDisconnectTellStickController);
+	NODE_SET_METHOD(exports, "Sensor", _tdSensor);
+	NODE_SET_METHOD(exports, "SensorValue", _tdSensorValue);
+	NODE_SET_METHOD(exports, "Controller", _tdController);
+	NODE_SET_METHOD(exports, "ControllerValue", _tdControllerValue);
+	NODE_SET_METHOD(exports, "SetControllerValue", _tdSetControllerValue);
+	NODE_SET_METHOD(exports, "RemoveController", _tdRemoveController);
 
 	export_defines(exports);
 
